@@ -35,9 +35,9 @@ app.get('/retaurants', (req, res) => {
 })
 
 app.post('/restaurants', (req, res) => {
-    const addRestQuery = `INSERT INTO restaurants (name, address, foodType, lon, lat, image, comments) VALUES (?,?,?,?,?,?,?)`
+    const addRestQuery = `INSERT INTO restaurants (name, address, foodType, lon, lat, image, restaurantId) VALUES (?,?,?,?,?,?,?)`
 
-    database.run(addRestQuery, (error, results) => {
+    database.run(addRestQuery, [req.body.name, req.body.address, req.body.foodType, req.body.lon, req.body.lat, req.body.image, req.body.restaurantId ], (error) => {
         if(error) {
             console.log('Add restaurant failed')
             res.sendStatus(500)
@@ -68,12 +68,44 @@ app.get('/categories', (req, res) => {
 app.post('/categories', (req, res) => {
     const addCatQuery = `INSERT INTO categories (image, type, description) VALUES (?,?,?)`
 
-    database.run(addCatQuery, (error, results) => {
+    database.run(addCatQuery, [req.body.image, req.body.type, req.body.description], (error) => {
         if(error) {
             console.log(`Adding category failed`)
             res.sendStatus(500)
         } else {
             console.log(`Adding category successful`)
+            res.sendStatus(200)
+        }
+    })
+})
+
+// Comment Routes
+
+app.get('/comments/:id', (req, res)=> {
+    const restaurantId = req.params.id;
+    const getAllRestComments = `SELECT * FROM comments WHERE restaurantId = ${restaurantId}`
+
+    database.all(getAllRestComments, (error, results) => {
+        if(error) {
+            console.log(`Could not get all of restaurants comments`)
+            res.sendStatus(500)
+        } else {
+            console.log(`Get restaurants comments successful`)
+            res.status(200).json(results)
+        }
+    })
+})
+
+app.post('/comments/:id', (req, res) => {
+    const restaurantId = req.params.id;
+    const addRestComment = `INSERT INTO comments (comment, restaurantId) VALUES (?,${restaurantId})`
+
+    database.run(addRestComment, [req.body.comment], (error) => {
+        if(error) {
+            console.log(`Adding comment to restaurant failed`)
+            res.sendStatus(500)
+        } else {
+            console.log(`Adding comment was successul`)
             res.sendStatus(200)
         }
     })
