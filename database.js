@@ -12,7 +12,7 @@ let database = new sqlite3.Database('./database.db')
 // Comments Table
 // comment, restaurantId (this is how we will relate a comment to a restaurant)
 
-const createTableRestaurantsQuery = `CREATE TABLE IF NOT EXISTS restaurants (name TEXT, address TEXT, foodType TEXT, lon INTEGER, lat INTEGER, image TEXT, restaurantId)`
+const createTableRestaurantsQuery = `CREATE TABLE IF NOT EXISTS restaurants (name TEXT, address TEXT, foodType TEXT, lon INTEGER, lat INTEGER, image TEXT, restaurantId INTEGER)`
 
 const createTableCategoriesQuery = `CREATE TABLE IF NOT EXISTS categories (image TEXT, type TEXT, description TEXT)`
 

@@ -1,4 +1,5 @@
 const express = require('express')
+const database = require('./database.js')
 
 const app = express()
 
@@ -20,8 +21,8 @@ app.get('/', (req, res)=> {
 
 // Restaurants routes
 
-app.get('/retaurants', (req, res) => {
-    const getAllRestQuery = `SELECT * FROM resaurants`
+app.get('/api/restaurants', (req, res) => {
+    const getAllRestQuery = `SELECT * FROM restaurants`
 
     database.all( getAllRestQuery, (error, results) => {
         if(error) {
@@ -51,7 +52,7 @@ app.post('/restaurants', (req, res) => {
 
 // Category routes
 
-app.get('/categories', (req, res) => {
+app.get('/api/categories', (req, res) => {
     const getAllCatQuery = `SELECT * FROM categories`
     
     database.all(getAllCatQuery, (error, results) => {
@@ -81,7 +82,7 @@ app.post('/categories', (req, res) => {
 
 // Comment Routes
 
-app.get('/comments/:id', (req, res)=> {
+app.get('/api/comments/:id', (req, res)=> {
     const restaurantId = req.params.id;
     const getAllRestComments = `SELECT * FROM comments WHERE restaurantId = ${restaurantId}`
 
@@ -96,7 +97,7 @@ app.get('/comments/:id', (req, res)=> {
     })
 })
 
-app.post('/comments/:id', (req, res) => {
+app.post('/api/comments/:id', (req, res) => {
     const restaurantId = req.params.id;
     const addRestComment = `INSERT INTO comments (comment, restaurantId) VALUES (?,${restaurantId})`
 
@@ -110,6 +111,21 @@ app.post('/comments/:id', (req, res) => {
         }
     })
 })
+
+// app.delete('/api/comments/:id', (req, res)=> {
+//     const commentId = req.params.id
+//     const deleteCommentQuery = `DELETE FROM comments WHERE comment.oid = ${commentId}`
+
+//     database.run(deleteCommentQuery, (error) => {
+//         if(error) {
+//             console.log(`Could not delete comment. You're obvjously doing it wrong`)
+//             res.sendStatus(500)
+//         } else {
+//             console.log('Deletion of this comment was successful')
+//             res.sendStatus(200)
+//         }
+//     })
+// })
 
 
 app.listen(PORT, ()=> {
