@@ -84,7 +84,7 @@ app.post('/categories', (req, res) => {
 
 app.get('/api/comments/:id', (req, res)=> {
     const restaurantId = req.params.id;
-    const getAllRestComments = `SELECT * FROM comments WHERE restaurantId = ${restaurantId}`
+    const getAllRestComments = `SELECT *, comments.oid FROM comments WHERE restaurantId = ${restaurantId}`
 
     database.all(getAllRestComments, (error, results) => {
         if(error) {
@@ -112,20 +112,20 @@ app.post('/api/comments/:id', (req, res) => {
     })
 })
 
-// app.delete('/api/comments/:id', (req, res)=> {
-//     const commentId = req.params.id
-//     const deleteCommentQuery = `DELETE FROM comments WHERE comment.oid = ${commentId}`
+app.delete('/api/comments/:id', (req, res)=> {
+    const commentId = req.params.id
+    const deleteCommentQuery = `DELETE FROM comments WHERE comment.rowid = ?`
 
-//     database.run(deleteCommentQuery, (error) => {
-//         if(error) {
-//             console.log(`Could not delete comment. You're obvjously doing it wrong`)
-//             res.sendStatus(500)
-//         } else {
-//             console.log('Deletion of this comment was successful')
-//             res.sendStatus(200)
-//         }
-//     })
-// })
+    database.run(deleteCommentQuery, [commentId], (error) => {
+        if(error) {
+            console.log(`Could not delete comment.`)
+            res.sendStatus(500)
+        } else {
+            console.log('Deletion of this comment was successful')
+            res.sendStatus(200)
+        }
+    })
+})
 
 
 app.listen(PORT, ()=> {
